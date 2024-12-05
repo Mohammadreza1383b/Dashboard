@@ -1,15 +1,25 @@
-name: Feature Comment Trigger  
+name: Commit Message Check  
 
 on:  
-  issue_comment:  
-    types: [created]  
+  push:  
+    branches:  
+      - main  # Change this to your default branch if not main  
 
 jobs:  
-  feature_comment:  
-    if: startsWith(github.event.comment.body, 'feat:')  
+  commit-message:  
     runs-on: ubuntu-latest  
+
     steps:  
-      - name: Print feature comment  
-        run: echo "Feature comment detected: '${{ github.event.comment.body }}'"  
-        
-      # Add more steps here for further actions when a comment is detected
+      - name: Checkout Code  
+        uses: actions/checkout@v2  
+
+      - name: Check Commit Message  
+        run: |  
+          # Get the latest commit message  
+          latest_commit_message=$(git log -1 --pretty=%B)  
+          
+          # Check if the commit message starts with 'feat:'  
+          if [[ ! $latest_commit_message =~ ^feat: ]]; then  
+              echo "Error: Commit message must start with 'feat:'."  
+              exit 1  
+          fi
