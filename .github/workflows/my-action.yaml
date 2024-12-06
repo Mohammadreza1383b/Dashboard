@@ -1,25 +1,14 @@
 name: Commit Message Check  
 
-on:  
-  push:  
-    branches:  
-      - main  # Change this to your default branch if not main  
+on: [pull_request]  
 
 jobs:  
-  commit-message:  
+  commit-check:  
     runs-on: ubuntu-latest  
-
     steps:  
-      - name: Checkout Code  
+      - name: Checkout repository  
         uses: actions/checkout@v2  
 
-      - name: Check Commit Message  
+      - name: Check commit messages  
         run: |  
-          # Get the latest commit message  
-          latest_commit_message=$(git log -1 --pretty=%B)  
-          
-          # Check if the commit message starts with 'feat:'  
-          if [[ ! $latest_commit_message =~ ^feat: ]]; then  
-              echo "Error: Commit message must start with 'feat:'."  
-              exit 1  
-          fi
+          git log --format=%s | grep -E '^(feat|fix|docs|style|refactor|perf|test|chore):'
